@@ -4,7 +4,7 @@ All notable changes to DBLT will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.1.0] - 2026-02-08
 
 ### Changed
 - Renamed project from ClipClean to **DBLT**
@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Linux: GTK3 + AppIndicator (libayatana-appindicator3)
   - Headless fallback if tray libraries aren't available
 - Right-click tray menu with **"Start with Windows/system"** toggle
+
+### Added
 - Autostart support:
   - Windows: `HKCU\...\Run` registry key
   - Linux: `~/.config/autostart/dblt.desktop`
@@ -34,5 +36,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Self-contained single-file builds for Windows and Linux
 - MIT License
 
-[Unreleased]: https://github.com/crizzler/DBLT/compare/v1.0.0...HEAD
+[1.1.0]: https://github.com/crizzler/DBLT/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/crizzler/DBLT/releases/tag/v1.0.0

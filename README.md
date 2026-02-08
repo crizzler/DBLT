@@ -14,12 +14,12 @@ Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
 
 **No installation needed. No tech skills required. Just download, unzip, and run.**
 
-### 👉 [Download DBLT for Windows (64-bit)](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.0.0-win-x64.zip)
+### 👉 [Download DBLT for Windows (64-bit)](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.1.0-win-x64.zip)
 
 1. Click the link above to download the `.zip` file
 2. Right-click the downloaded file → **Extract All**
-3. Double-click **`DBLT-v1.0.0-win-x64.exe`**
-4. Done! DBLT runs in the background. Just copy and paste as usual.
+3. Double-click **`DBLT-v1.1.0-win-x64.exe`**
+4. Done! DBLT appears in your **system tray** (near the clock). No console window.
 
 > 💡 DBLT lives in your system tray (near the clock). Right-click the icon to exit or toggle autostart.
 
