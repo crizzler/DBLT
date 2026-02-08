@@ -1,10 +1,22 @@
-# ClipClean
+# DBLT
 
-A lightweight clipboard monitor that automatically normalizes fancy Unicode characters into their plain ASCII equivalents. Runs on **Windows** and **Linux** (Wayland + X11).
+**Don't get caught out there.** ✨
+
+DBLT is a lightweight clipboard monitor that silently replaces those telltale AI-generated Unicode characters — em dashes, smart quotes, curly apostrophes — with their normal, human-typed equivalents before you paste.
+
+You know those fancy `—` and `'` that no human has ever intentionally typed? Yeah, those. DBLT takes care of them so you don't embarrass yourself on social media.
+
+Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
+
+## Why?
+
+Because some people learned the hard way that posting AI-generated text with all its fancy Unicode fingerprints is... noticeable. 👀
+
+DBLT makes sure your clipboard is clean before you hit paste. That's it. That's the app.
 
 ## What It Does
 
-When you copy text containing typographic characters like smart quotes, em dashes, or curly apostrophes, ClipClean instantly replaces them in your clipboard:
+DBLT watches your clipboard and instantly swaps out AI-typical characters:
 
 | Before | After |
 |--------|-------|
@@ -16,11 +28,13 @@ When you copy text containing typographic characters like smart quotes, em dashe
 
 ### Example
 
-**Copied:**
+**You copy this (straight from the AI):**
 > A Remember Prefab—class name SaveablePrefab—is Crystal Save's Swiss-army knife for prefab persistence. It's very reliable.
 
-**Result in clipboard:**
+**DBLT fixes it to:**
 > A Remember Prefab...class name SaveablePrefab...is Crystal Save's Swiss-army knife for prefab persistence. It's very reliable.
+
+Now it looks like a human wrote it. You're welcome.
 
 ## Installation
 
@@ -63,7 +77,9 @@ Check the [Releases](https://github.com/crizzler/DBLT/releases) page for ready-t
 ClipClean.exe          # Windows
 ```
 
-The app runs in the background, polling the clipboard every 150ms. Press **Ctrl+C** to stop.
+DBLT runs silently in the background, checking your clipboard every 150ms. Press **Ctrl+C** to stop.
+
+Just leave it running. Copy text. Paste text. Nobody will ever know. 🤫
 
 ## How It Works
 
@@ -82,6 +98,10 @@ IClipboardProvider.cs            # Clipboard abstraction interface
 WindowsClipboardProvider.cs      # Win32 P/Invoke implementation
 LinuxClipboardProvider.cs        # Linux CLI-tool implementation
 ```
+
+## What does DBLT stand for?
+
+It stands for DBLT. That's it. Don't worry about it. 😉
 
 ## License
 

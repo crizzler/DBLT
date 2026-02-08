@@ -17,7 +17,8 @@ internal static class Program
     {
         IClipboardProvider clipboard = CreateProvider();
 
-        Console.WriteLine("ClipClean running. Press Ctrl+C to exit.");
+        Console.WriteLine("DBLT is watching your clipboard. Don't worry about it. 😉");
+        Console.WriteLine("Press Ctrl+C to stop.");
 
         using var cts = new CancellationTokenSource();
         Console.CancelKeyPress += (_, e) =>
@@ -60,7 +61,7 @@ internal static class Program
                     _lastWritten = cleaned;
                     _lastWrittenAt = DateTime.UtcNow;
 
-                    Console.WriteLine("Normalized clipboard text.");
+                    Console.WriteLine("📋 Cleaned! Nobody will ever know.");
                 }
             }
             catch (OperationCanceledException)
