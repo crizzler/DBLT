@@ -132,6 +132,9 @@ internal sealed class LinuxTrayIcon : ITrayIcon
     // ── Run (blocks on gtk_main) ───────────────────────────────────
     public void Run(CancellationToken ct)
     {
+        // Suppress harmless "Failed to load module" GTK warnings
+        Environment.SetEnvironmentVariable("GTK_MODULES", "");
+
         if (!gtk_init_check(IntPtr.Zero, IntPtr.Zero))
             throw new InvalidOperationException("gtk_init_check failed.");
 

@@ -26,4 +26,5 @@ Properties/PublishProfiles/
 
 # Release artifacts
 *.zip
+*.tar.gz
 DBLT-*.exe

@@ -14,10 +14,6 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-        // Hide console window on Windows — the tray icon is the UI.
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            WindowsTrayIcon.HideConsoleWindow();
-
         var clipboard = CreateProvider();
         using var cts = new CancellationTokenSource();
 

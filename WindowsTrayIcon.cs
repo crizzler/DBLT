@@ -156,14 +156,6 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     private static extern IntPtr GetModuleHandle(string? lpModuleName);
 
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr GetConsoleWindow();
-
-    [DllImport("user32.dll")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    private const int SW_HIDE = 0;
-
     // ── State ──────────────────────────────────────────────────────
     private IntPtr _hWnd;
     private NOTIFYICONDATA _nid;
@@ -173,14 +165,6 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private bool _disposed;
 
     public void SetAutoStartChecked(bool isChecked) => _autoStartChecked = isChecked;
-
-    /// <summary>Hides the console window so the app is tray-only.</summary>
-    public static void HideConsoleWindow()
-    {
-        var hConsole = GetConsoleWindow();
-        if (hConsole != IntPtr.Zero)
-            ShowWindow(hConsole, SW_HIDE);
-    }
 
     // ── Run (blocks on message loop) ───────────────────────────────
     public void Run(CancellationToken ct)
