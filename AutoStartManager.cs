@@ -66,7 +66,29 @@ internal static class AutoStartManager
     [DllImport("advapi32.dll", SetLastError = true)]
     private static extern int RegCloseKey(IntPtr hKey);
 
-    private static string ExePath => Environment.ProcessPath ?? "";
+    private static string ExePath
+    {
+        get
+        {
+            // On Linux, single-file apps extract to a temp dir so
+            // Environment.ProcessPath points to a path that won't
+            // survive a reboot.  Resolve /proc/self/exe to get the
+            // real on-disk binary the user actually launched.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                try
+                {
+                    var realPath = Path.GetFullPath(
+                        File.ResolveLinkTarget("/proc/self/exe", returnFinalTarget: true)?.FullName
+                        ?? "");
+                    if (!string.IsNullOrEmpty(realPath) && File.Exists(realPath))
+                        return realPath;
+                }
+                catch { }
+            }
+            return Environment.ProcessPath ?? "";
+        }
+    }
 
     private static bool IsEnabledWindows()
     {
