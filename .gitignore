@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+obj/
+
+# IDE / editor
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Rider
+.idea/
+*.sln.iml
+
+# Publish profiles
+Properties/PublishProfiles/
+
+# NuGet
+*.nupkg
+*.snupkg
