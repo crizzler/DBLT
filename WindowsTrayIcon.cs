@@ -28,6 +28,7 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private const uint NIF_TIP           = 0x04;
 
     private const int  IDI_APPLICATION   = 32512;
+    private static readonly IntPtr HWND_MESSAGE = (IntPtr)(-3);
 
     private const uint MF_STRING         = 0x0000;
     private const uint MF_SEPARATOR      = 0x0800;
@@ -41,6 +42,7 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private const int  MENU_EXIT         = 2;
 
     // ── Win32 structs ──────────────────────────────────────────────
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -186,7 +188,7 @@ internal sealed class WindowsTrayIcon : ITrayIcon
         _hWnd = CreateWindowEx(
             0, "DBLTTrayClass", "DBLT", 0,
             0, 0, 0, 0,
-            IntPtr.Zero, IntPtr.Zero, hInstance, IntPtr.Zero);
+            HWND_MESSAGE, IntPtr.Zero, hInstance, IntPtr.Zero);
 
         var hIcon = LoadIcon(IntPtr.Zero, (IntPtr)IDI_APPLICATION);
 

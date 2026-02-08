@@ -11,6 +11,7 @@ internal static class Program
     private static string? _lastWritten;
     private static DateTime _lastWrittenAt = DateTime.MinValue;
 
+    [STAThread]
     private static void Main()
     {
         var clipboard = CreateProvider();
