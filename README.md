@@ -8,6 +8,23 @@ You know those fancy `—` and `'` that no human has ever intentionally typed? Y
 
 Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
 
+---
+
+## ⬇️ Download for Windows
+
+**No installation needed. No tech skills required. Just download, unzip, and run.**
+
+### 👉 [Download DBLT for Windows (64-bit)](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.0.0-win-x64.zip)
+
+1. Click the link above to download the `.zip` file
+2. Right-click the downloaded file → **Extract All**
+3. Double-click **`DBLT-v1.0.0-win-x64.exe`**
+4. Done! DBLT runs in the background. Just copy and paste as usual.
+
+> 💡 To stop it, click the terminal window and press `Ctrl+C`, or just close it.
+
+---
+
 ## Why?
 
 Because some people learned the hard way that posting AI-generated text with all its fancy Unicode fingerprints is... noticeable. 👀
