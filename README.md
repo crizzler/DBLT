@@ -21,7 +21,7 @@ Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
 3. Double-click **`DBLT-v1.0.0-win-x64.exe`**
 4. Done! DBLT runs in the background. Just copy and paste as usual.
 
-> 💡 To stop it, click the terminal window and press `Ctrl+C`, or just close it.
+> 💡 DBLT lives in your system tray (near the clock). Right-click the icon to exit or toggle autostart.
 
 ---
 
@@ -90,11 +90,13 @@ Check the [Releases](https://github.com/crizzler/DBLT/releases) page for ready-t
 ## Usage
 
 ```bash
-./ClipClean            # Linux
-ClipClean.exe          # Windows
+./DBLT                 # Linux
+DBLT.exe               # Windows
 ```
 
-DBLT runs silently in the background, checking your clipboard every 150ms. Press **Ctrl+C** to stop.
+DBLT sits in your **system tray** (near the clock) — no console window. Right-click the tray icon to:
+- Toggle **"Start with Windows/system"** (autostart on boot)
+- **Exit** the app
 
 Just leave it running. Copy text. Paste text. Nobody will ever know. 🤫
 
@@ -109,11 +111,16 @@ Just leave it running. Copy text. Paste text. Nobody will ever know. 🤫
 ## Project Structure
 
 ```
-ClipClean.csproj                 # Project file (.NET 9)
+DBLT.csproj                      # Project file (.NET 9)
 Program.cs                       # Main loop + text normalization
 IClipboardProvider.cs            # Clipboard abstraction interface
 WindowsClipboardProvider.cs      # Win32 P/Invoke implementation
 LinuxClipboardProvider.cs        # Linux CLI-tool implementation
+ITrayIcon.cs                     # System tray icon interface
+WindowsTrayIcon.cs               # Win32 Shell_NotifyIcon implementation
+LinuxTrayIcon.cs                 # GTK3 + AppIndicator implementation
+HeadlessTrayIcon.cs              # Fallback when no tray is available
+AutoStartManager.cs              # Boot autostart (Registry / .desktop)
 ```
 
 ## What does DBLT stand for?

@@ -23,3 +23,7 @@ Properties/PublishProfiles/
 # NuGet
 *.nupkg
 *.snupkg
+
+# Release artifacts
+*.zip
+DBLT-*.exe

@@ -20,7 +20,7 @@ internal sealed class LinuxClipboardProvider : IClipboardProvider
     public LinuxClipboardProvider()
     {
         (_readCmd, _readArgs, _writeCmd, _writeArgs) = ResolveTools();
-        Console.WriteLine($"[ClipClean] Using clipboard tool: {_readCmd}");
+        Console.WriteLine($"[DBLT] Using clipboard tool: {_readCmd}");
     }
 
     // ── Read ───────────────────────────────────────────────────────
