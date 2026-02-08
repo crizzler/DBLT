@@ -28,7 +28,6 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private const uint NIF_TIP           = 0x04;
 
     private const int  IDI_APPLICATION   = 32512;
-    private static readonly IntPtr HWND_MESSAGE = (IntPtr)(-3);
 
     private const uint MF_STRING         = 0x0000;
     private const uint MF_SEPARATOR      = 0x0800;
@@ -46,8 +45,9 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    private struct WNDCLASS
+    private struct WNDCLASSEX
     {
+        public uint cbSize;
         public uint style;
         public WndProcDelegate lpfnWndProc;
         public int cbClsExtra;
@@ -58,12 +58,15 @@ internal sealed class WindowsTrayIcon : ITrayIcon
         public IntPtr hbrBackground;
         public string? lpszMenuName;
         public string lpszClassName;
+        public IntPtr hIconSm;
     }
 
+    // Minimal NOTIFYICONDATA — only the fields we actually use (V1 compatible).
+    // Using a flat byte buffer avoids struct-packing issues across x86/x64.
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct NOTIFYICONDATA
     {
-        public int cbSize;
+        public uint cbSize;
         public IntPtr hWnd;
         public uint uID;
         public uint uFlags;
@@ -71,16 +74,6 @@ internal sealed class WindowsTrayIcon : ITrayIcon
         public IntPtr hIcon;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string szTip;
-        public int dwState;
-        public int dwStateMask;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string szInfo;
-        public uint uTimeoutOrVersion;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-        public string szInfoTitle;
-        public int dwInfoFlags;
-        public Guid guidItem;
-        public IntPtr hBalloonIcon;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -99,9 +92,9 @@ internal sealed class WindowsTrayIcon : ITrayIcon
 
     // ── Win32 imports ──────────────────────────────────────────────
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern ushort RegisterClass(ref WNDCLASS lpWndClass);
+    private static extern ushort RegisterClassEx(ref WNDCLASSEX lpwcx);
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern IntPtr CreateWindowEx(
         uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
         int x, int y, int nWidth, int nHeight,
@@ -113,13 +106,15 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     [DllImport("user32.dll")]
     private static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool Shell_NotifyIcon(uint dwMessage, ref NOTIFYICONDATA pnid);
 
     [DllImport("user32.dll")]
     private static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
 
     [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
 
     [DllImport("user32.dll")]
@@ -129,6 +124,7 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     private static extern IntPtr DispatchMessage(ref MSG lpMsg);
 
     [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     [DllImport("user32.dll")]
@@ -160,6 +156,14 @@ internal sealed class WindowsTrayIcon : ITrayIcon
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     private static extern IntPtr GetModuleHandle(string? lpModuleName);
 
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr GetConsoleWindow();
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    private const int SW_HIDE = 0;
+
     // ── State ──────────────────────────────────────────────────────
     private IntPtr _hWnd;
     private NOTIFYICONDATA _nid;
@@ -170,6 +174,14 @@ internal sealed class WindowsTrayIcon : ITrayIcon
 
     public void SetAutoStartChecked(bool isChecked) => _autoStartChecked = isChecked;
 
+    /// <summary>Hides the console window so the app is tray-only.</summary>
+    public static void HideConsoleWindow()
+    {
+        var hConsole = GetConsoleWindow();
+        if (hConsole != IntPtr.Zero)
+            ShowWindow(hConsole, SW_HIDE);
+    }
+
     // ── Run (blocks on message loop) ───────────────────────────────
     public void Run(CancellationToken ct)
     {
@@ -177,34 +189,44 @@ internal sealed class WindowsTrayIcon : ITrayIcon
 
         _wndProc = WndProc;
 
-        var wc = new WNDCLASS
+        var wcex = new WNDCLASSEX
         {
+            cbSize       = (uint)Marshal.SizeOf<WNDCLASSEX>(),
             lpfnWndProc  = _wndProc,
             hInstance     = hInstance,
             lpszClassName = "DBLTTrayClass",
         };
-        RegisterClass(ref wc);
+
+        if (RegisterClassEx(ref wcex) == 0)
+            return; // registration failed — fall through silently
 
         _hWnd = CreateWindowEx(
             0, "DBLTTrayClass", "DBLT", 0,
             0, 0, 0, 0,
-            HWND_MESSAGE, IntPtr.Zero, hInstance, IntPtr.Zero);
+            IntPtr.Zero, IntPtr.Zero, hInstance, IntPtr.Zero);
+
+        if (_hWnd == IntPtr.Zero)
+            return; // window creation failed
 
         var hIcon = LoadIcon(IntPtr.Zero, (IntPtr)IDI_APPLICATION);
 
         _nid = new NOTIFYICONDATA
         {
-            cbSize          = Marshal.SizeOf<NOTIFYICONDATA>(),
-            hWnd            = _hWnd,
-            uID             = 1,
-            uFlags          = NIF_MESSAGE | NIF_ICON | NIF_TIP,
-            uCallbackMessage = (uint)WM_TRAYICON,
-            hIcon           = hIcon,
-            szTip           = "DBLT — Clipboard Normalizer",
-            szInfo          = "",
-            szInfoTitle     = "",
+            cbSize           = (uint)Marshal.SizeOf<NOTIFYICONDATA>(),
+            hWnd             = _hWnd,
+            uID              = 1,
+            uFlags           = NIF_MESSAGE | NIF_ICON | NIF_TIP,
+            uCallbackMessage = WM_TRAYICON,
+            hIcon            = hIcon,
+            szTip            = "DBLT",
         };
-        Shell_NotifyIcon(NIM_ADD, ref _nid);
+
+        if (!Shell_NotifyIcon(NIM_ADD, ref _nid))
+        {
+            // Tray icon failed to add. Clean up and return.
+            DestroyWindow(_hWnd);
+            return;
+        }
 
         // Re-add the icon if Explorer restarts.
         _wmTaskbarCreated = RegisterWindowMessage("TaskbarCreated");
@@ -230,8 +252,8 @@ internal sealed class WindowsTrayIcon : ITrayIcon
         // Tray icon interaction
         if (msg == WM_TRAYICON)
         {
-            int evt = (int)(lParam.ToInt64() & 0xFFFF);
-            if (evt == (int)WM_RBUTTONUP || evt == (int)WM_LBUTTONUP)
+            uint evt = (uint)(lParam.ToInt64() & 0xFFFF);
+            if (evt == WM_RBUTTONUP || evt == WM_LBUTTONUP)
                 ShowContextMenu();
             return IntPtr.Zero;
         }
