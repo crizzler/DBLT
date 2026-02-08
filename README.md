@@ -10,11 +10,13 @@ Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
 
 ---
 
-## ⬇️ Download for Windows
+## ⬇️ Download
 
-**No installation needed. No tech skills required. Just download, unzip, and run.**
+**No installation needed. No tech skills required. Just download, extract, and run.**
 
-### 👉 [Download DBLT for Windows (64-bit)](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.1.0-win-x64.zip)
+### 🪟 Windows (64-bit)
+
+#### 👉 [Download DBLT for Windows](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.1.0-win-x64.zip)
 
 1. Click the link above to download the `.zip` file
 2. Right-click the downloaded file → **Extract All**
@@ -22,6 +24,37 @@ Runs on **Windows** and **Linux** (Wayland + X11). Zero config. Just run it.
 4. Done! DBLT appears in your **system tray** (near the clock). No console window.
 
 > 💡 DBLT lives in your system tray (near the clock). Right-click the icon to exit or toggle autostart.
+
+### 🐧 Linux (64-bit)
+
+#### 👉 [Download DBLT for Linux](https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.1.0-linux-x64.tar.gz)
+
+**Prerequisites:** You need a clipboard tool installed:
+- **Wayland** (GNOME 40+, KDE 6, Sway, etc.): `sudo apt install wl-clipboard`
+- **X11**: `sudo apt install xclip` (or `xsel`)
+
+**Install:**
+
+```bash
+# Download and extract
+wget https://github.com/crizzler/DBLT/releases/latest/download/DBLT-v1.1.0-linux-x64.tar.gz
+tar xzf DBLT-v1.1.0-linux-x64.tar.gz
+
+# Make executable and move to your PATH
+chmod +x DBLT-v1.1.0-linux-x64
+sudo mv DBLT-v1.1.0-linux-x64 /usr/local/bin/DBLT
+
+# Run it
+DBLT
+```
+
+Or just run it from wherever you extracted it:
+
+```bash
+./DBLT-v1.1.0-linux-x64
+```
+
+> 💡 On Linux with a supported desktop (GNOME, KDE, etc.), DBLT shows in your **system tray** via AppIndicator. Right-click to exit or toggle autostart. If no tray is available, it runs headless in the terminal.
 
 ---
 
